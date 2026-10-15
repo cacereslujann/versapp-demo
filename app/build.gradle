@@ -1,0 +1,23 @@
+plugins { id 'com.android.application' }
+
+def demoVersion = providers.gradleProperty('demoVersion').getOrElse('1.0.0')
+def demoBuild = providers.gradleProperty('demoBuild').getOrElse('1').toInteger()
+def demoEnvironment = providers.gradleProperty('demoEnvironment').getOrElse('dev')
+if (!(demoVersion ==~ /[A-Za-z0-9][A-Za-z0-9._-]{0,49}/)) throw new GradleException('Version invalida')
+if (!(demoEnvironment in ['dev', 'qa', 'stg', 'prod'])) throw new GradleException('Entorno invalido')
+if (demoBuild < 1 || demoBuild > 2100000000) throw new GradleException('Numero de build invalido')
+
+android {
+    namespace 'com.versapp.demo'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.versapp.demo'
+        minSdk 23
+        targetSdk 35
+        versionCode demoBuild
+        versionName demoVersion
+        buildConfigField 'String', 'ENTORNO', '"' + demoEnvironment + '"'
+    }
+    buildFeatures { buildConfig true }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+}
